@@ -1,6 +1,9 @@
 #![no_std]
 #![no_main]
 
+// For the write_fmt call
+use core::fmt::Write;
+
 extern crate cortex_m;
 extern crate feather_m0 as hal;
 extern crate panic_halt;
@@ -18,6 +21,7 @@ use usb_device::bus::UsbBusAllocator;
 use usb_device::prelude::*;
 use usbd_serial::{SerialPort, USB_CLASS_CDC};
 
+use cortex_m::interrupt::free as disable_interrupts;
 use cortex_m::asm::delay as cycle_delay;
 use cortex_m::peripheral::NVIC;
 
@@ -65,9 +69,29 @@ fn main() -> ! {
 
     // Flash the LED in a spin loop to demonstrate that USB is
     // entirely interrupt driven.
+    let mut prev_val: u64 = 1;
+    let mut val: u64 = 1;
     loop {
         cycle_delay(15 * 1024 * 1024);
         red_led.toggle();
+        unsafe {
+            disable_interrupts(|_| {
+                USB_SERIAL.as_mut().map(|serial| {
+                    serial.write_fmt(format_args!("{}\r\n", val));
+                });
+            });
+
+            // calculate next fibb value
+            let tmp = val;
+            val = prev_val + val;
+            prev_val = tmp;
+
+            // check for rollover & reset
+            if prev_val > val {
+                prev_val = 1;
+                val = 1;
+            }
+        }
     }
 }
 
