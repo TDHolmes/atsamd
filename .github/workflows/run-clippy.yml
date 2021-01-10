@@ -35,6 +35,7 @@ jobs:
         toolchain: ${{ matrix.toolchain }}
         override: true
         target: thumbv7em-none-eabihf
+
     - name: Clippy ${{ matrix.bsp }}
       run: |
         set -ex
