@@ -28,6 +28,7 @@ jobs:
         toolchain: ${{ matrix.toolchain }}
         override: true
         target: thumbv6m-none-eabi
+        components: clippy
     - name: Install Rust (thumbv7em)
       uses: actions-rs/toolchain@v1
       with:
@@ -35,15 +36,15 @@ jobs:
         toolchain: ${{ matrix.toolchain }}
         override: true
         target: thumbv7em-none-eabihf
+        components: clippy
 
     - name: Clippy ${{ matrix.bsp }}
       run: |
         set -ex
         cd boards/${{ matrix.bsp }}
         toml_path=boards/${{ matrix.bsp }}
-    - uses: actions/checkout@v1
-    - run: rustup component add clippy
+        echo "::set-env name=TOML_PATH::$TOML_PATH"
     - uses: actions-rs/clippy-check@v1
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        args: --all-features --manifest-path=${{ toml_path }}/Cargo.toml
+        args: --all-features --manifest-path=$TOML_PATH/Cargo.toml
