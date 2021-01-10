@@ -1,5 +1,5 @@
 name: Build BSPs
-on: []
+on: [push, pull_request]
 
 jobs:
   setup:
@@ -41,5 +41,3 @@ jobs:
         build_invocation=$(cat ./crates.json | jq -Mr --arg board '${{ matrix.bsp }}' -c '.boards | .[$board] | .build')
         set -ex
         cd boards/${{ matrix.bsp }}
-        $(${build_invocation})
-        cargo publish --dry-run
