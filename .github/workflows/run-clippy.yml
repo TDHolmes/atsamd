@@ -38,13 +38,8 @@ jobs:
         target: thumbv7em-none-eabihf
         components: clippy
 
-    - name: Clippy ${{ matrix.bsp }}
-      run: |
-        set -ex
-        cd boards/${{ matrix.bsp }}
-        toml_path=boards/${{ matrix.bsp }}
-        echo "TOML_PATH=$TOML_PATH" >> $GITHUB_ENV
     - uses: actions-rs/clippy-check@v1
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        args: --all-features --manifest-path=${TOML_PATH}/Cargo.toml
+        name: Clippy {{ matrix.bsp }}
+        args: --all-features --manifest-path=boards/{{ matrix.bsp }}/Cargo.toml
