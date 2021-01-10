@@ -6,15 +6,19 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
+    using: "composite"
     steps:
     - name: Checkout sources
       uses: actions/checkout@v2
-    - id: set-matrix
-      uses: ./.github/actions/list-BSPs
+      - run: sudo apt-get install -y jq
+        shell: bash
+        run: |
+          matrix_json=$(cat crates.json | jq -Mr -c '{ "bsp": (.boards | keys ) }')
+          echo "::set-output name=matrix::${matrix_json}"
 
   build:
     runs-on: ubuntu-latest
-    continue-on-error: ${{ matrix.toolchain == 'nightly' }}
+    continue-on-error: true
     needs: setup
     strategy:
       matrix: ${{fromJson(needs.setup.outputs.matrix)}}
@@ -25,7 +29,7 @@ jobs:
       uses: actions-rs/toolchain@v1
       with:
         profile: minimal
-        toolchain: ${{ matrix.toolchain }}
+        toolchain: nightly
         override: true
         target: thumbv6m-none-eabi
         components: clippy
@@ -33,7 +37,7 @@ jobs:
       uses: actions-rs/toolchain@v1
       with:
         profile: minimal
-        toolchain: ${{ matrix.toolchain }}
+        toolchain: nightly
         override: true
         target: thumbv7em-none-eabihf
         components: clippy
