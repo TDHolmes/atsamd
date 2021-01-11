@@ -42,4 +42,4 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         name: Clippy ${{ matrix.bsp }}
-        args: --features=unproven,usb --manifest-path=boards/${{ matrix.bsp }}/Cargo.toml
+        args: --all-features --manifest-path=boards/${{ matrix.bsp }}/Cargo.toml
