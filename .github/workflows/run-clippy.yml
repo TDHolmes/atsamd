@@ -41,5 +41,5 @@ jobs:
     - uses: actions-rs/clippy-check@v1
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        name: Clippy {{ matrix.bsp }}
+        name: Clippy ${{ matrix.bsp }}
         args: --all-features --manifest-path=boards/${{ matrix.bsp }}/Cargo.toml
