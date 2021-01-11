@@ -5,7 +5,9 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      matrix:
+        description: "Build matrix"
+        value: ${{ steps.compute-matrix.outputs.matrix }}
     using: "composite"
     steps:
     - name: Checkout sources
