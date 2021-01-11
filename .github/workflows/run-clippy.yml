@@ -5,20 +5,12 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     outputs:
-      matrix:
-        description: "Build matrix"
-        value: ${{ steps.compute-matrix.outputs.matrix }}
-    using: "composite"
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
     - name: Checkout sources
       uses: actions/checkout@v2
-    - run: sudo apt-get install -y jq
-      shell: bash
-    - id: compute-matrix
-      shell: bash
-      run: |
-        matrix_json=$(cat crates.json | jq -Mr -c '{ "bsp": (.boards | keys ) }')
-        echo "::set-output name=matrix::${matrix_json}"
+    - id: set-matrix
+      uses: ./.github/actions/list-BSPs-no-toolchain
 
   build:
     runs-on: ubuntu-latest
