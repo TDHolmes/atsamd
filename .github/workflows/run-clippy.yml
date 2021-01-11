@@ -10,12 +10,13 @@ jobs:
     steps:
     - name: Checkout sources
       uses: actions/checkout@v2
-      - run: sudo apt-get install -y jq
-      - id: set-matrix
-        shell: bash
-        run: |
-          matrix_json=$(cat crates.json | jq -Mr -c '{ "bsp": (.boards | keys ) }')
-          echo "::set-output name=matrix::${matrix_json}"
+    - run: sudo apt-get install -y jq
+      shell: bash
+    - id: set-matrix
+      shell: bash
+      run: |
+        matrix_json=$(cat crates.json | jq -Mr -c '{ "bsp": (.boards | keys ) }')
+        echo "::set-output name=matrix::${matrix_json}"
 
   build:
     runs-on: ubuntu-latest
