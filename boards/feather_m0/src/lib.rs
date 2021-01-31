@@ -93,7 +93,7 @@ define_pins!(
     pin rfm_cs = a6,
 
     /// Reset for the RFM module
-    #[cfg(all(feature = "rfm", not(feature = "express")))]
+    #[cfg(all(feature = "rfm", not(feature = "express"), not(feature = "adalogger")))]
     pin rfm_reset = a8,
 
     /// Interrupt from the RFM module
@@ -109,8 +109,16 @@ define_pins!(
     pin flash_sck = a9,
 
     /// SPI MOSI for the external flash
-    #[cfg(all(feature = "express", not(feature = "rfm")))]
+    #[cfg(all(feature = "express", not(feature = "rfm"), not(feature = "adalogger")))]
     pin flash_mosi = a8,
+
+    /// SD card SPI chip select
+    #[cfg(all(feature = "adalogger", not(feature = "rfm"), not(feature = "express")))]
+    pin sd_cs = a8,
+
+    /// SD card detect
+    #[cfg(all(feature = "adalogger", not(feature = "rfm"), not(feature = "express")))]
+    pin sd_cd = a21,
 
     /// SPI MISO for the external flash
     #[cfg(feature = "express")]

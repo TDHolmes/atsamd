@@ -55,6 +55,7 @@ nb = "0.1"
 drogue-nom-utils = "0.1"
 nom = { version = "5.1", default-features= false }
 heapless = "0.5"
+embedded-sdmmc = "0.3"
 
 [features]
 # ask the HAL to enable atsamd21g support
@@ -70,6 +71,8 @@ panic_semihosting = ["panic-semihosting"]
 rfm = []
 # Enable pins for the flash and neopixel on the Feather M0 Express
 express = []
+# Enable pins for the adalogger SD card reader
+adalogger = []
 
 [profile.dev]
 incremental = false
@@ -127,3 +130,7 @@ name = "sleeping_timer_rtc"
 [[example]]
 name = "clock"
 required-features = ["usb"]
+
+[[example]]
+name = "adalogger"
+required-features = ["adalogger", "usb"]
