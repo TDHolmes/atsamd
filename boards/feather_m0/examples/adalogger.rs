@@ -60,7 +60,7 @@ fn main() -> ! {
     let mut pins = hal::Pins::new(peripherals.PORT);
     let mut red_led = pins.d13.into_open_drain_output(&mut pins.port);
 
-    timer.clock_mode();  // put RTC in clock/calendar mode
+    timer.clock_mode(); // put RTC in clock/calendar mode
 
     let bus_allocator = unsafe {
         USB_ALLOCATOR = Some(hal::usb_allocator(
