@@ -56,9 +56,11 @@ fn main() -> ! {
         .configure_gclk_divider_and_source(ClockGenId::GCLK3, 32, ClockSource::OSC32K, true)
         .unwrap();
     let rtc_clock = clocks.rtc(&timer_clock).unwrap();
-    let timer = rtc::Rtc::new(peripherals.RTC, rtc_clock.freq(), &mut peripherals.PM);
+    let mut timer = rtc::Rtc::new(peripherals.RTC, rtc_clock.freq(), &mut peripherals.PM);
     let mut pins = hal::Pins::new(peripherals.PORT);
     let mut red_led = pins.d13.into_open_drain_output(&mut pins.port);
+
+    timer.clock_mode();  // put RTC in clock/calendar mode
 
     let bus_allocator = unsafe {
         USB_ALLOCATOR = Some(hal::usb_allocator(
