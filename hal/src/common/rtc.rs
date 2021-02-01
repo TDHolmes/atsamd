@@ -6,6 +6,9 @@ use crate::timer_traits::InterruptDrivenTimer;
 use hal::timer::{CountDown, Periodic};
 use void::Void;
 
+#[cfg(feature = "sdmmc")]
+use embedded_sdmmc::{TimeSource, Timestamp};
+
 // SAMx5x imports
 #[cfg(feature = "min-samd51g")]
 use crate::target_device::{
@@ -42,6 +45,20 @@ impl From<ClockR> for Datetime {
             day: clock.day().bits(),
             month: clock.month().bits(),
             year: clock.year().bits(),
+        }
+    }
+}
+
+#[cfg(feature = "sdmmc")]
+impl From<Datetime> for Timestamp {
+    fn from(clock: Datetime) -> Timestamp {
+        Timestamp {
+            year_since_1970: clock.year,
+            zero_indexed_month: clock.month,
+            zero_indexed_day: clock.day,
+            hours: clock.hours,
+            minutes: clock.minutes,
+            seconds: clock.seconds,
         }
     }
 }
@@ -243,6 +260,13 @@ impl InterruptDrivenTimer for Rtc {
     /// controller.
     fn disable_interrupt(&mut self) {
         self.mode0().intenclr.write(|w| w.cmp0().set_bit());
+    }
+}
+
+#[cfg(feature = "sdmmc")]
+impl TimeSource for Rtc {
+    fn get_timestamp(&self) -> Timestamp {
+        self.current_time().into()
     }
 }
 

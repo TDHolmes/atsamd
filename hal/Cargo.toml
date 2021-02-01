@@ -124,6 +124,10 @@ path = "../pac/atsame54p"
 version = "0.9"
 optional = true
 
+[dependencies.embedded-sdmmc]
+version = "0.3"
+optional = true
+
 [features]
 # This section lists our feature name to dependency mapping.  This are separated
 # out so that the board support crates can reference a single feature name to
@@ -178,3 +182,4 @@ min-samd51p = ["min-samd51n"]
 unproven = ["embedded-hal/unproven"]
 use_rtt = ["jlink_rtt"]
 usb = ["usb-device"]
+sdmmc = ["embedded-sdmmc"]
