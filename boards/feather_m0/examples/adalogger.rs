@@ -91,10 +91,10 @@ fn main() -> ! {
         NVIC::unmask(interrupt::USB);
     }
 
-    // Now work on the SD peripherals
+    // Now work on the SD peripherals. Slow SPI speed required on init
     let spi = hal::spi_master(
         &mut clocks,
-        100_u32.khz(),
+        400_u32.khz(),
         peripherals.SERCOM4,
         &mut peripherals.PM,
         pins.sck,
