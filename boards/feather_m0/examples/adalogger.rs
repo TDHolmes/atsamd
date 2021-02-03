@@ -1,18 +1,12 @@
 #![no_std]
 #![no_main]
-#![feature(alloc_error_handler)]
-
-extern crate alloc;
 
 use feather_m0 as hal;
 use panic_halt as _;
 
-use alloc::string::String;
-use core::alloc::Layout;
 use core::fmt::Write;
 use core::sync::atomic;
 
-use alloc_cortex_m::CortexMHeap;
 use cortex_m::interrupt::free as disable_interrupts;
 use cortex_m::peripheral::NVIC;
 use embedded_sdmmc::{Controller, SdMmcSpi, VolumeIdx};
@@ -29,8 +23,8 @@ use hal::rtc;
 use hal::time::U32Ext;
 use hal::usb::UsbBus;
 
-#[global_allocator]
-static ALLOCATOR: CortexMHeap = CortexMHeap::empty();
+use heapless::consts::U1024;
+use heapless::String;
 
 #[entry]
 fn main() -> ! {
@@ -44,11 +38,6 @@ fn main() -> ! {
         &mut peripherals.NVMCTRL,
     );
     let mut delay = Delay::new(core.SYST, &mut clocks);
-
-    // setup heap
-    let start = cortex_m_rt::heap_start() as usize;
-    let size = 10240; // in bytes
-    unsafe { ALLOCATOR.init(start, size) }
 
     // configure the peripherals we'll need
     // get the internal 32k running at 1024 Hz for the RTC
@@ -158,7 +147,7 @@ fn main() -> ! {
 #[macro_export]
 macro_rules! usbserial_write {
     ($($tt:tt)*) => {{
-        let mut s = String::new();
+        let mut s: String<U1024> = String::new();
         write!(s, $($tt)*).unwrap();
         let message_bytes = s.as_bytes();
         let mut total_written = 0;
@@ -174,11 +163,6 @@ macro_rules! usbserial_write {
             total_written += bytes_written;
         }
     }};
-}
-
-#[alloc_error_handler]
-fn oom(_: Layout) -> ! {
-    loop {}
 }
 
 static mut USB_ALLOCATOR: Option<UsbBusAllocator<UsbBus>> = None;
